@@ -55,7 +55,8 @@ const App: React.FC = () => {
     return filtered.sort((a, b) => {
         const getRepresentativePOVal = (group: CustomerGroup, type: 'min' | 'max') => {
             const vals = group.orders.map(o => {
-                const match = o.poNumber.match(/^(\d+)/);
+                // Mengambil angka pertama yang ditemukan dalam string PO (tidak harus di awal string)
+                const match = o.poNumber.match(/(\d+)/);
                 return match ? parseInt(match[1], 10) : 0;
             });
             if (!vals.length) return 0;
@@ -65,7 +66,8 @@ const App: React.FC = () => {
         if (sortOrder === 'po_asc') {
             return getRepresentativePOVal(a, 'min') - getRepresentativePOVal(b, 'min');
         } else {
-            return getRepresentativePOVal(b, 'max') - getRepresentativePOVal(b, 'max'); // Fixed a minor logic bug from previous version while at it
+            // Fix: Membandingkan b dengan a untuk urutan descending (Terbaru)
+            return getRepresentativePOVal(b, 'max') - getRepresentativePOVal(a, 'max'); 
         }
     });
   }, [data, searchTerm, sortOrder]);
